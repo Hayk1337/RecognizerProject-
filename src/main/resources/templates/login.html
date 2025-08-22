@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@460;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #111827;
+            font-family: 'Arial', sans-serif;
+            color: white;
+        }
+
+        .site-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 23px;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+            position: relative;
+            transform: translateZ(20px);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-container {
+            width: 360px;
+            padding: 25px 30px;
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border-radius: 10px;
+            box-shadow: 0 6px 180px #929292;
+            text-align: center;
+            position: relative;
+            height: 330px;
+            transition: height 0.25s ease;
+        }
+
+        .login-container.signup-active {
+            height: 410px;
+        }
+
+        .login-container.checkEmail-active {
+            height: 330px;
+        }
+
+        .login-container.recovery-active {
+            height: 340px;
+        }
+
+        .login-form label,
+        .signup-form label,
+        .checkEmail-form label,
+        .recovery-form label {
+            display: block;
+            text-align: left;
+            font-weight: bold;
+            margin: 12px 0 5px;
+            color: #020202;
+        }
+
+        .input-wrapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .login-form input,
+        .signup-form input,
+        .recovery-form input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            background-color: rgba(14, 14, 14, 0.22);
+            color: #000000;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .eye-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            color: #666;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+
+        .eye-icon:hover {
+            opacity: 1;
+        }
+
+        .login-form input:focus,
+        .signup-form input:focus,
+        .recovery-form input:focus {
+            outline: none;
+            box-shadow: inset 0 0 3px rgb(0, 0, 0);
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            font-size: 17px;
+            font-weight: bold;
+            background-color: #000000;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            transform: scale(1.03);
+        }
+
+        button:active {
+            transform: scale(0.98);
+            background-color: #003366;
+            box-shadow: 0 3px 8px rgba(0, 191, 255, 0.5);
+        }
+
+        .form-wrapper {
+            position: absolute;
+            width: 100%;
+            left: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        .login-form {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .signup-form,
+        .checkEmail-form,
+        .recovery-form {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        .login-form.inactive {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+
+        .signup-form.active,
+        .checkEmail-form.active,
+        .recovery-form.active {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .switch-text {
+            color: #737373;
+            font-size: 14px;
+        }
+
+        .switch-text a,
+        .forgot-password {
+            color: black;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .switch-text a:hover,
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .forgot-password {
+            display: block;
+        }
+
+        .back-arrow {
+            position: absolute;
+            left: 70px;
+            top: 11px;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+            color: #000;
+        }
+
+        .back-arrow:hover {
+            opacity: 1;
+        }
+
+        .success-message {
+            background-color: rgba(0, 128, 0, 0.1);
+            border: 1px solid #0a0;
+            color: #0a0;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-size: 14px;
+            display: none;
+        }
+
+        .recovery-text {
+            color: #000;
+            font-size: 14px;
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        .error-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: calc(100% + 12px);
+            z-index: 1000;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        .error-message {
+            background-color: #ff4444;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .error-message.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+<div class="login-container" id="container">
+    <div class="error-container">
+        <div class="error-message" id="floating-error"></div>
+    </div>
+    <div class="site-title">Recognize.am</div>
+    <div style="position:relative; overflow: hidden; width: 100%;height: 100%">
+        <div class="form-wrapper login-form">
+            <form onsubmit="handleLoginSubmit(event)">
+                <label for="email">Email</label>
+                <div class="input-wrapper">
+                    <input type="text" id="email" name="email" required>
+                </div>
+
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" name="password" required>
+                    <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" onclick="togglePassword('password')">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </div>
+
+                <button type="submit">Login</button>
+
+
+                <div style="display: flex; margin-top: 35px ;justify-content: space-between">
+                    <a class="forgot-password">Forgot password?</a>
+                    <!--                <a onclick="toggleForms('recovery')" class="forgot-password">Forgot password?</a>-->
+
+                    <div class="switch-text">
+                        New user? <a onclick="toggleForms('signup')">Sign up</a>
+                    </div>
+
+
+                </div>
+            </form>
+        </div>
+        <div class="form-wrapper signup-form">
+            <svg class="back-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" onclick="toggleForms('login')">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            <form onsubmit="handleSignUpSubmit(event)">
+                <h3 style="color: #000;margin-top: 10px; margin-bottom: 30px;">Create Account</h3>
+
+                <label for="signup-email">Email</label>
+                <div class="input-wrapper">
+                    <input type="email" id="signup-email" name="email" required>
+                </div>
+
+                <label for="signup-password">Password</label>
+                <div class="input-wrapper">
+                    <input type="password" id="signup-password" name="password" required>
+                    <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" onclick="togglePassword('signup-password')">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </div>
+
+                <label for="signup-confirm-password">Confirm Password</label>
+                <div class="input-wrapper">
+                    <input type="password" id="signup-confirm-password" name="confirm-password" required>
+                    <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round"
+                         onclick="togglePassword('signup-confirm-password')">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </div>
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+
+        <div class="form-wrapper checkEmail-form">
+            <form onsubmit="handleSignUpSubmit(event)">
+                <svg height="70px"
+                     style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;"
+                     version="1.1" viewBox="0 0 128 128" width="100%" xml:space="preserve"
+                     xmlns="http://www.w3.org/2000/svg" xmlns:serif="http://www.serif.com/"
+                     xmlns:xlink="http://www.w3.org/1999/xlink"><rect height="128" id="Mail" style="fill:none;" width="128" x="0.881" y="0"/>
+                    <path d="M117.943,98.008c-2.481,2.386 -5.795,3.924 -9.389,3.991c-29.115,0.18 -58.232,0.18 -87.347,0c-7.208,-0.134 -13.687,-6.38 -13.825,-13.825c-0.121,-18.782 -0.121,-37.566 0,-56.348c0.134,-7.211 6.377,-13.686 13.825,-13.825c29.115,-0.181 58.232,-0.181 87.347,0c7.234,0.135 13.687,6.378 13.825,13.825c0.11,18.783 0.11,37.565 0,56.348c-0.051,2.779 -1.005,5.443 -2.584,7.679c0.065,0.531 -0.224,0.942 -0.524,1.343c-0.335,0.45 -0.808,0.742 -1.328,0.812Zm-38.808,-36.473l-2.25,2.172c-6.686,6.379 -18.034,6.65 -25.004,-0.007l-0.491,-0.474l-35.533,33.006c1.554,1.074 3.41,1.73 5.399,1.767c29.083,0.18 58.166,0.18 87.249,0c2.211,-0.041 4.33,-0.875 6.034,-2.242l-35.404,-34.222Zm-65.894,-35.184c-1.129,1.58 -1.822,3.483 -1.86,5.525c-0.12,18.749 -0.12,37.499 0,56.248c0.035,1.887 0.648,3.702 1.675,5.251l35.454,-32.933l-35.269,-34.091Zm102.872,-0.517l-34.099,32.921l35.117,33.944c0.763,-1.366 1.218,-2.922 1.249,-4.574c0.109,-18.75 0.109,-37.5 0,-56.25c-0.042,-2.221 -0.89,-4.34 -2.267,-6.041Zm-3.074,-2.592c-1.364,-0.76 -2.909,-1.211 -4.534,-1.241c-29.039,-0.18 -58.079,-0.001 -87.118,-0.001c-1.879,0.012 -3.691,0.596 -5.245,1.593c12.875,12.456 25.688,24.976 38.643,37.349c5.215,4.854 13.956,5.006 19.33,-0.121l38.924,-37.579Z"
+                          style="fill-rule:nonzero;"/></svg>
+
+                <h3 style="color: #000;margin-top: 20px; margin-bottom: 10px;">Please check your email.</h3>
+                <p style="font-size: 14px; margin-bottom: 40px; color: black">Sometimes emails may end up in your spam
+                    folder. If you don't find
+                    it in your inbox, please check your spam.</p>
+                <div style="display: flex; justify-content: space-around;">
+                    <svg onclick="toggleForms('login')" cursor="pointer" width="60" height="60" fill="#4e4e4e"
+                         id="Layer_1_1_" version="1.1" viewBox="0 0 16 16"
+                         xml:space="preserve" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M8,0C3.582,0,0,3.582,0,8s3.582,8,8,8s8-3.582,8-8S12.418,0,8,0z M10.354,12.646l-0.707,0.707L4.293,8l5.354-5.354  l0.707,0.707L5.707,8L10.354,12.646z"/>
+            </svg>
+                    <button id="resend-btn" style="width: 150px;height: 40px; margin-top: 10px; background: #4e4e4e"
+                            disabled>Resend (60)
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="form-wrapper recovery-form">
+            <svg class="back-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" onclick="toggleForms('login')">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+
+            <form id="recovery-form" onsubmit="handleRecoverySubmit(event)">
+                <h3 style="color: #000;margin-top: 10px; margin-bottom: 20px;">Password Recovery</h3>
+
+                <p class="recovery-text">Enter your email address and we'll send you a verification code to reset your
+                    password.</p>
+
+                <label for="recovery-email">Email</label>
+                <div class="input-wrapper">
+                    <input type="email" id="recovery-email" name="email" required>
+                </div>
+
+                <div id="recovery-success" class="success-message">
+                    A verification code has been sent to your email.
+                </div>
+
+                <button type="submit">Send Code</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    // Toggle password visibility
+    function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        const icon = input.nextElementSibling;
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.innerHTML = `
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+            `;
+        } else {
+            input.type = 'password';
+            icon.innerHTML = `
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+            `;
+        }
+    }
+
+    function toggleForms(formType) {
+        const loginForm = document.querySelector('.login-form');
+        const signupForm = document.querySelector('.signup-form');
+        const checkEmailForm = document.querySelector('.checkEmail-form');
+        const recoveryForm = document.querySelector('.recovery-form');
+        const container = document.getElementById('container');
+
+        // Remove all active classes first
+        loginForm.classList.remove('inactive', 'active');
+        signupForm.classList.remove('inactive', 'active');
+        checkEmailForm.classList.remove('inactive', 'active');
+        recoveryForm.classList.remove('inactive', 'active');
+        container.classList.remove('signup-active', 'recovery-active', 'checkEmail-active');
+
+        // Set appropriate classes based on formType
+        switch (formType) {
+            case 'signup':
+                loginForm.classList.add('inactive');
+                signupForm.classList.add('active');
+                checkEmailForm.classList.add('inactive');
+                container.classList.add('signup-active');
+                clearError();
+                break;
+            case 'checkEmail':
+                startResendTimer("resend-btn", 60);
+                loginForm.classList.add('inactive');
+                checkEmailForm.classList.add('active');
+                container.classList.add('checkEmail-active');
+                clearError();
+                break;
+            case 'recovery':
+                loginForm.classList.add('inactive');
+                checkEmailForm.classList.add('inactive');
+                recoveryForm.classList.add('active');
+                container.classList.add('recovery-active');
+                clearError();
+                break;
+            case 'login':
+                loginForm.classList.add('active');
+                clearError();
+                break;
+        }
+    }
+
+    function handleRecoverySubmit(event) {
+        event.preventDefault();
+        const email = document.getElementById('recovery-email').value;
+
+        // Show success message
+        const successMessage = document.getElementById('recovery-success');
+        successMessage.style.display = 'block';
+
+        // Wait 1.5 seconds before redirecting
+        setTimeout(() => {
+            window.location.href = 'https://recognize.am/recovery';
+        }, 1500);
+    }
+
+    async function handleLoginSubmit(event) {
+        event.preventDefault();
+        const formData = new URLSearchParams();
+        formData.append('username', document.getElementById('email').value);
+        formData.append('password', document.getElementById('password').value);
+        try {
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: formData.toString(),
+            });
+            if (response.ok) {
+                window.location.href = '/recognizer';
+            } else {
+                showError('Incorrect login or password');
+            }
+        } catch (error) {
+            console.error('Error during login:', error);
+            showError('An unexpected error occurred.');
+        }
+    }
+
+    async function handleSignUpSubmit(event) {
+        event.preventDefault();
+        let password = document.getElementById('signup-password').value
+
+        if (password.length < 8) {
+            showError("Password must be at least 8 characters long.");
+            return;
+        }
+        // Проверка наличия заглавной буквы
+        if (!/[A-Z]/.test(password)) {
+            showError("Password must contain at least one uppercase letter.");
+            return;
+        }
+        // Проверка наличия цифры
+        if (!/[0-9]/.test(password)) {
+            showError("Password must contain at least one digit.");
+            return;
+        }
+        // Проверка наличия пробела
+        if (/\s/.test(password)) {
+            showError("Password cannot contain spaces.");
+            return;
+        }
+        if (password === document.getElementById('signup-email').value) {
+            showError('Password cannot be the same as your email')
+            return;
+        }
+
+        if (password !== document.getElementById('signup-confirm-password').value) {
+            showError('Password and confirm do not match')
+            return;
+        }
+        const data = {
+            username: document.getElementById('signup-email').value,
+            password: password,
+        };
+        fetch('/signUp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        }).then(response => response.json())
+            .then(data => {
+                if (data.errorMessage) {
+                    showError(data.errorMessage)
+                } else {
+                    toggleForms('checkEmail')
+                }
+            })
+    }
+
+
+    function showError(message) {
+        const errorElement = document.getElementById('floating-error');
+        errorElement.textContent = message;
+        errorElement.classList.add('visible');
+
+        setTimeout(() => {
+            clearError();
+        }, 5000);
+    }
+
+    function clearError() {
+        const errorElement = document.getElementById('floating-error');
+        errorElement.classList.remove('visible');
+    }
+
+    function startResendTimer(buttonId, duration) {
+        const button = document.getElementById(buttonId);
+        let timer = duration;
+
+        button.disabled = true; // Деактивируем кнопку
+        button.textContent = `Resend (${timer})`;
+
+        const interval = setInterval(() => {
+            timer--;
+            if (timer > 0) {
+                button.textContent = `Resend (${timer})`;
+            } else {
+                clearInterval(interval);
+                button.textContent = "Resend";
+                button.disabled = false; // Активируем кнопку
+                button.style.background = 'black';
+            }
+        }, 1000);
+    }
+</script>
+</body>
+</html>

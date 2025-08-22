@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Bar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: black;
+            padding: 10px 20px;
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+        }
+
+        .navbar ul li {
+            margin: 0 15px;
+        }
+
+        .navbar ul li a {
+            text-decoration: none;
+            color: black;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .error-message {
+            margin-bottom: 15px;
+            transform: translate(0, -50%) scale(0);
+            background-color: #ff4d4d;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        .error-message.show {
+            transform: translate(0%, 0%) scale(1);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <img style="margin-left: 30px; margin-bottom: 9px" src="../images/logo2.png" alt="Logo" class="logo">
+    <div class="error-message" id="errorMessage"></div>
+    <ul>
+        <li style="padding-top: 10px"><a style="color: white" href="priceList">Գլխավոր</a></li>
+        <li style="margin-top:1px; background-color: #ffffff;border-radius: 50px;padding-top: 7px; padding-right: 20px; padding-left: 20px;">
+            <a style="color: #000000;" href="recognizer">Աշխատարան</a></li>
+        <li style="padding-top: 10px"><a style="color: white" href="priceList">Փաթեթներ</a></li>
+        <li><a href="#section5"><img src="../images/profileIcon.png" height="38" width="38" alt=""/></a></li>
+    </ul>
+</nav>
+</body>
+</html>

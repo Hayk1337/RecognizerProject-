@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@460;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Dark gradient background */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #111827;
+            font-family: 'Arial', sans-serif;
+            color: white;
+        }
+
+        /* Container for the login box with transparency */
+        .login-container {
+            width: 360px; /* Optimized width */
+            height: 320px;
+            padding: 25px 30px; /* Refined padding */
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border-radius: 10px;
+            box-shadow: 0 6px 180px #929292;
+            text-align: center;
+        }
+
+        /* Title styling */
+        h2 {
+            font-size: 26px;
+            margin-bottom: 20px;
+            color: #000000;
+        }
+
+        /* Button hover and active effects */
+        .button:hover {
+            transform: scale(1.03);
+        }
+
+        .site-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 23px;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+            position: relative;
+            transform: translateZ(20px);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <div class="site-title">Recognize.am</div>
+
+    <form class="login-form">
+        <svg width="70" height="70" enable-background="new 0 0 24 24" id="Layer_1" version="1.0" viewBox="0 0 24 24"
+             xml:space="preserve"
+             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><polyline clip-rule="evenodd" fill="none" fill-rule="evenodd" id="Done__x2014__Displayed_on_the_left_side_of_a_contextual_action_bar__x28_CAB_x29__to_allow_the_user_to_dismiss_it._1_" points="  20,6 9,17 4,12 " stroke="green" stroke-miterlimit="10" stroke-width="2"/>
+                    </svg>
+
+        <h2 style="font-weight:initial; color: #000;margin-top: 8px;font-size: 17px; margin-bottom: 40px;">Your account
+            has been successfully confirmed. You can now log in and start exploring our services.</h2>
+        <svg onclick="window.location.href='https://recognize.am/login';"
+             cursor="pointer" width="60" height="60" id="Layer_1_1_" version="1.1" viewBox="0 0 16 16" fill="#4e4e4e"
+             xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M8,0C3.582,0,0,3.582,0,8s3.582,8,8,8s8-3.582,8-8S12.418,0,8,0z M10.354,12.646l-0.707,0.707L4.293,8l5.354-5.354  l0.707,0.707L5.707,8L10.354,12.646z"/>
+            </svg>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ընտրեք ձեր փաթեթը</title>
+    <style>
+        :root {
+            --e-global-color-accent: #3A5BCC;
+            --e-global-color-secondary: #898989;
+            --e-global-color-primary: #000000ff;
+            --e-global-color-twbb_bg_1: #3A5BCC26;
+            --e-global-color-twbb_bg_3: #f3f4f6ff;
+            --border-transition: 0.3s;
+        }
+
+        .profile-panel {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            width: 320px;
+            background: #111827;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    /* Вместо opacity используем visibility и плавное появление */
+    visibility: hidden;
+            opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    z-index: 1000;  /* Высокий z-index для активного модала */
+        }
+
+        .profile-panel.active {
+    visibility: visible;
+            opacity: 1;
+    transform: translateY(0);
+        }
+
+        .profile-header {
+            padding: 16px;
+            background: #1f2937;
+            border-bottom: 1px solid #374151;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            background: #374151;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .avatar svg {
+            width: 24px;
+            height: 24px;
+            color: #9ca3af;
+        }
+
+        .user-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-email {
+            color: #9ca3af;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .status-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            background: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            border-radius: 9999px;
+            font-size: 12px;
+        }
+
+        .status-badge svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .plan-badge {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .time-section {
+            padding: 12px 16px;
+            background: rgba(31, 41, 55, 0.5);
+            border-bottom: 1px solid #374151;
+        }
+
+        .time-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .time-container svg {
+            width: 18px;
+            height: 18px;
+            color: #9ca3af;
+        }
+
+        .time-info p:first-child {
+            font-size: 14px;
+            color: #9ca3af;
+        }
+
+        .time-info-core {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .menu-section {
+            padding: 8px;
+        }
+
+        .menu-item {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            color: #e5e7eb;
+            text-align: left;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .menu-item:hover {
+            background: #1f2937;
+        }
+
+        .menu-item svg {
+            width: 18px;
+            height: 18px;
+            color: #9ca3af;
+        }
+
+        .menu-item-content {
+            flex: 1;
+        }
+
+        .menu-item-title {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .menu-item-subtitle {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 2px;
+        }
+
+        .chevron-icon {
+            width: 16px;
+            height: 16px;
+            color: #6b7280;
+        }
+
+        .footer-section {
+            padding: 8px;
+            border-top: 1px solid #374151;
+            margin-top: 8px;
+        }
+
+        .logout-button {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            color: #f87171;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .logout-button:hover {
+            background: rgba(248, 113, 113, 0.1);
+        }
+
+        .logout-button svg {
+            width: 18px;
+            height: 18px;
+        }
+
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #111827;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .pricing-container {
+            display: flex;
+            gap: 24px;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 80px 20px;
+            justify-content: center;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .pricing-card {
+            color: white;
+            background: #1f2937;
+            border-radius: 4px;
+            padding: 26px;
+            width: 33%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid #374151;
+            min-width: 300px;
+        }
+
+        .pricing-card.featured {
+            background-color: #ffffff;
+            color: black;
+            border: none;
+        }
+
+        .card-header h2 {
+            font-size: 24px;
+            margin: 0 0 16px 0;
+            font-weight: 600;
+            color: inherit;
+        }
+
+        .price {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            color: inherit;
+        }
+
+        .description {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+            color: inherit;
+            opacity: 0.9;
+        }
+
+        .features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 24px 0;
+        }
+
+        .features li {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            line-height: 1.4;
+            color: inherit;
+        }
+
+        .features li::before {
+            content: "✓";
+            margin-right: 12px;
+            color: white;
+        }
+
+        .featured .features li::before {
+            color: #000000;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 4px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+            transition: var(--border-transition);
+            width: 100%;
+        }
+
+        .btn-primary {
+            background-color: white;
+            color: black;
+        }
+
+        .btn-white {
+            background-color: #1F2937;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .pricing-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 16px;
+                padding: 40px 20px;
+            }
+
+            .pricing-card {
+                width: 100%;
+                max-width: 320px;
+            }
+        }
+    </style>
+
+    <style>
+        .navbar {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #1f2937;
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+        }
+
+        .navbar ul li {
+            margin: 0 15px;
+        }
+
+        .navbar ul li a {
+            text-decoration: none;
+            color: black;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .error-message {
+            margin-bottom: 15px;
+            transform: translate(0, -50%) scale(0);
+            background-color: #ff4d4d;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        .error-message.show {
+            transform: translate(0%, 0%) scale(1);
+            opacity: 1;
+        }
+        .lang-select {
+            position: relative;
+            font-family: Arial, sans-serif;
+        }
+
+        .lang-btn {
+            width: 65px;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .lang-btn:hover {
+            color: #e5e5e5;
+        }
+
+        .lang-options {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 4px;
+            background: #1F2937;
+            border: 1px solid #333;
+            border-radius: 4px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .lang-select.active .lang-options {
+            display: block;
+        }
+
+        .lang-option {
+            display: block;
+            width: 100%;
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            color: #ccc;
+            font-size: 14px;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .lang-option:hover {
+            background: #222;
+            color: white;
+        }
+
+        .chevron {
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            display: inline-block;
+            padding: 3px;
+            transform: rotate(45deg);
+            margin-left: 4px;
+            margin-top: -7px;
+            transition: transform 0.2s;
+        }
+
+        .lang-select.active .chevron {
+            transform: rotate(-135deg);
+            margin-top: 2px;
+        }
+
+    </style>
+    <nav class="navbar" style="width:100%">
+        <img style="margin-left: 50px; margin-bottom: -6px" src="../images/logo2.png" alt="Logo" class="logo">
+        <div class="error-message" id="errorMessage"></div>
+        <ul>
+            <li style="padding-top: 9px"><a style="color: white" data-i18n="nav_home" href="priceList">Home</a></li>
+            <li style="margin-top:10px;">
+                <a style="color: white"  data-i18n="nav_recognizer" href="recognizer">Recognizer</a></li>
+            <li style="margin-top:5px;padding-top: 5px; height:32px;background-color: #ffffff;border-radius: 50px; padding-right: 20px; padding-left: 20px;">
+                <a style="color: #000000;"  data-i18n="nav_prices" href="priceList">Prices</a></li>
+            <li style="padding-top: 6px;">
+                <div class="lang-select">
+                    <button class="lang-btn">
+                        <span data-i18n="nav_lang"></span>
+                        <span class="chevron"></span>
+                    </button>
+                    <div class="lang-options" id="langOptions">
+                        <button class="lang-option">ՀԱՅ</button>
+                        <button class="lang-option">ENG</button>
+                    </div>
+                </div>
+            </li>
+            <li style="margin-top: 3px;cursor: pointer;"><a>
+                <svg id="profileButton" width="38px" height="38px" viewBox="0 0 24 24" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22 12C22 6.49 17.51 2 12 2C6.49 2 2 6.49 2 12C2 14.9 3.25 17.51 5.23 19.34C5.23 19.35 5.23 19.35 5.22 19.36C5.32 19.46 5.44 19.54 5.54 19.63C5.6 19.68 5.65 19.73 5.71 19.77C5.89 19.92 6.09 20.06 6.28 20.2C6.35 20.25 6.41 20.29 6.48 20.34C6.67 20.47 6.87 20.59 7.08 20.7C7.15 20.74 7.23 20.79 7.3 20.83C7.5 20.94 7.71 21.04 7.93 21.13C8.01 21.17 8.09 21.21 8.17 21.24C8.39 21.33 8.61 21.41 8.83 21.48C8.91 21.51 8.99 21.54 9.07 21.56C9.31 21.63 9.55 21.69 9.79 21.75C9.86 21.77 9.93 21.79 10.01 21.8C10.29 21.86 10.57 21.9 10.86 21.93C10.9 21.93 10.94 21.94 10.98 21.95C11.32 21.98 11.66 22 12 22C12.34 22 12.68 21.98 13.01 21.95C13.05 21.95 13.09 21.94 13.13 21.93C13.42 21.9 13.7 21.86 13.98 21.8C14.05 21.79 14.12 21.76 14.2 21.75C14.44 21.69 14.69 21.64 14.92 21.56C15 21.53 15.08 21.5 15.16 21.48C15.38 21.4 15.61 21.33 15.82 21.24C15.9 21.21 15.98 21.17 16.06 21.13C16.27 21.04 16.48 20.94 16.69 20.83C16.77 20.79 16.84 20.74 16.91 20.7C17.11 20.58 17.31 20.47 17.51 20.34C17.58 20.3 17.64 20.25 17.71 20.2C17.91 20.06 18.1 19.92 18.28 19.77C18.34 19.72 18.39 19.67 18.45 19.63C18.56 19.54 18.67 19.45 18.77 19.36C18.77 19.35 18.77 19.35 18.76 19.34C20.75 17.51 22 14.9 22 12ZM16.94 16.97C14.23 15.15 9.79 15.15 7.06 16.97C6.62 17.26 6.26 17.6 5.96 17.97C4.44 16.43 3.5 14.32 3.5 12C3.5 7.31 7.31 3.5 12 3.5C16.69 3.5 20.5 7.31 20.5 12C20.5 14.32 19.56 16.43 18.04 17.97C17.75 17.6 17.38 17.26 16.94 16.97Z"
+                          fill="white"/>
+                    <path d="M12 6.92969C9.93 6.92969 8.25 8.60969 8.25 10.6797C8.25 12.7097 9.84 14.3597 11.95 14.4197C11.98 14.4197 12.02 14.4197 12.04 14.4197C12.06 14.4197 12.09 14.4197 12.11 14.4197C12.12 14.4197 12.13 14.4197 12.13 14.4197C14.15 14.3497 15.74 12.7097 15.75 10.6797C15.75 8.60969 14.07 6.92969 12 6.92969Z"
+                          fill="white"/>
+                </svg>
+            </a></li>
+        </ul>
+    </nav>
+    <div class="profile-panel" id="profilePanel">
+        <!-- Шапка с информацией о пользователе -->
+        <div class="profile-header">
+            <div class="user-info">
+                <div class="avatar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </div>
+                <div class="user-details">
+                    <div class="user-email">user@example.com</div>
+                    <div class="status-container">
+                    <span class="status-badge" data-i18n="active">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </span>
+                        <span class="plan-badge" data-i18n="plane_F"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Секция с временем -->
+        <div class="time-section">
+            <div class="time-container">
+                <svg style="margin-top: 34px; stroke: #34d399" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <div class="time-info">
+                    <p data-i18n="remaining_time"></p>
+                    <div style="display: flex">
+                        <p id="available_time" style="margin-top:4px;color: #34d399; font-size: 18px; font-weight: 600"></p>
+                        <p style="margin-left: 7px;color: #34d399;font-size: 18px;margin-top:4px; font-weight: 600"
+                           data-i18n="minutes"></p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Основное меню -->
+        <div class="menu-section">
+            <!-- План подписки -->
+            <button class="menu-item" onclick="window.location.href = '/priceList'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                    <line x1="1" y1="10" x2="23" y2="10"/>
+                </svg>
+                <div class="menu-item-content">
+                    <div class="menu-item-title" data-i18n="update_plan"></div>
+                </div>
+                <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+            </button>
+
+            <!-- Настройки -->
+            <!--        <button class="menu-item">-->
+            <!--            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">-->
+            <!--                <circle cx="12" cy="12" r="3"/>-->
+            <!--                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>-->
+            <!--            </svg>-->
+            <!--            <div class="menu-item-content">-->
+            <!--                <div class="menu-item-title">Settings</div>-->
+            <!--                <div class="menu-item-subtitle">Preferences, API, Security</div>-->
+            <!--            </div>-->
+            <!--            <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">-->
+            <!--                <polyline points="9 18 15 12 9 6"/>-->
+            <!--            </svg>-->
+            <!--        </button>-->
+
+            <!--        &lt;!&ndash; Поддержка &ndash;&gt;-->
+            <!--        <button class="menu-item">-->
+            <!--            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">-->
+            <!--                <circle cx="12" cy="12" r="10"/>-->
+            <!--                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>-->
+            <!--                <line x1="12" y1="17" x2="12.01" y2="17"/>-->
+            <!--            </svg>-->
+            <!--            <div class="menu-item-content">-->
+            <!--                <div class="menu-item-title">Support</div>-->
+            <!--                <div class="menu-item-subtitle">Help Center, Contact Us</div>-->
+            <!--            </div>-->
+            <!--            <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">-->
+            <!--                <polyline points="9 18 15 12 9 6"/>-->
+            <!--            </svg>-->
+            <!--        </button>-->
+        </div>
+
+        <!-- Футер с кнопкой выхода -->
+        <div class="footer-section">
+            <button class="logout-button">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                <span data-i18n="logout"></span>
+            </button>
+        </div>
+    </div>
+</head>
+
+<body>
+
+
+<div class="pricing-container">
+    <div class="pricing-card">
+        <div class="card-header">
+            <h2>Բազային փաթեթ</h2>
+            <div class="price">5000֏/ամիս</div>
+            <p class="description">Իդեալական է սկսնակների և փորձ թեստի համար, ովքեր ցանկանում են փորձել
+                ծառայությունը:</p>
+        </div>
+        <ul class="features">
+            <li>300 րոպե սղագրում ամսական</li>
+            <li>Առավելագույնը 30 րոպե տևողությամբ</li>
+            <li>Հասանելիություն բազային գործիքներին</li>
+            <li>DOCX, PDF, TXT, SRT պահպանում</li>
+        </ul>
+        <button style="margin-top: 97px" class="btn btn-primary">Ընտրել բազային</button>
+    </div>
+
+    <div class="pricing-card featured">
+        <div class="card-header">
+            <h2>Ընդլայնված փաթեթ</h2>
+            <div class="price">9000֏/ամիս</div>
+            <p class="description">Կատարյալ է մասնագետների համար, ովքեր ունեն սղագրման ավելի մեծ ծավալի կարիք:</p>
+        </div>
+        <ul class="features">
+            <li>600 րոպե սղագրում ամսական</li>
+            <li>Առավելագույնը 90 րոպե տևողությամբ</li>
+            <li>20 վերջին սղագրումների պահպանում</li>
+            <li>Ամենը ինչ «բազային» փաթեթում</li>
+            <li>Առաջնահերթ email աջակցություն</li>
+        </ul>
+        <button style="margin-top: 66px" class="btn btn-white">Ընտրել ընդլայնված</button>
+    </div>
+
+    <div class="pricing-card">
+        <div class="card-header">
+            <h2>Կորպորատիվ փաթեթ</h2>
+            <div class="price">Կապվեք գնի համար</div>
+            <p class="description">Անհատական լուծումներ մեծ թիմերի համար՝ ըստ իրենց ծավալուն կարիքների:</p>
+        </div>
+        <ul class="features">
+            <li>Անսահմանափակ սղագրման ժամանակ</li>
+            <li>API ինտեգրացիա և հատուկ AI մոդելներ</li>
+            <li>Անսահմանափակ սղագրումների պահպանում</li>
+            <li>Թիմային աշխատանքի հնարավորություն</li>
+            <li>Dedicated account manager</li>
+            <li>Բոլոր AI գործիքների հասանելիություն</li>
+            <li>24/7 աջակցություն</li>
+        </ul>
+        <button class="btn btn-primary">Ստանալ առաջարկ</button>
+    </div>
+</div>
+</body>
+<script src="https://unpkg.com/i18next@21.8.13/dist/umd/i18next.min.js"></script>
+<script>
+    const resources = {
+        en: {
+            translation: {
+                "title": "Recognize.am",
+                "nav_lang": "ENG",
+                "nav_home": "Home",
+                "nav_recognizer": "Recognizer",
+                "nav_prices": "Prices",
+                "active": "Active",
+                "update_plan": "Update Plan",
+                "plane_F": "Free Plan",
+                "logout": "Sign Out",
+                "minutes": "minutes",
+                "remaining_time": "Remaining Time",
+
+            }
+        },
+        hy: {
+            translation: {
+                "title": "Recognize.am",
+                "nav_lang": "ՀԱՅ",
+                "nav_home": "Գլխավոր",
+                "nav_recognizer": "Վերծանիչ",
+                "nav_prices": "Փաթեթներ",
+                "active": "Ակտիվ",
+                "update_plan": "Թարմացնել Փաթեթը",
+                "plane_F": "Փորձնական Փաթեթ",
+                "logout": "Ելք",
+                "minutes": "րոպե",
+                "remaining_time": "Հասանելի ժամանակը",
+
+            }
+        }
+    };
+
+    // 3) Инициализируем i18next
+    //    Смотрим, есть ли сохранённый язык в localStorage
+    const savedLang = localStorage.getItem('selectedLang') || 'hy';
+
+    i18next.init({
+        lng: savedLang,        // язык при старте (из localStorage или по умолчанию)
+        fallbackLng: 'hy',
+        resources: resources
+    }).then(() => {
+        // После инициализации переводим все тексты
+        updateContent();
+    }).catch(err => console.error('i18next init error:', err));
+
+    /**
+     * Функция переводит все элементы с data-i18n и data-i18n-placeholder
+     */
+    function updateContent() {
+        // Меняем заголовок страницы
+        document.title = i18next.t('title') || 'Recognize PROJECT';
+
+        // Меняем текстовый контент по data-i18n
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            el.textContent = i18next.t(key);
+        });
+
+        // Меняем placeholder по data-i18n-placeholder
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            el.placeholder = i18next.t(key);
+        });
+    }
+
+    /**
+     * Функция для переключения языка
+     */
+    function switchLanguage(lang) {
+        i18next.changeLanguage(lang).then(() => {
+            // Сохраняем выбор в localStorage
+            localStorage.setItem('selectedLang', lang);
+            // Переводим контент
+            updateContent();
+        });
+    }
+    document.querySelectorAll('.lang-option').forEach(button => {
+        button.addEventListener('click', () => {
+            const langText = button.textContent.trim();
+            if (langText === 'ENG') {
+                switchLanguage('en');
+            } else if (langText === 'ՀԱՅ') {
+                switchLanguage('hy');
+            }
+            document.querySelector('.lang-select').classList.remove('active');
+        });
+    });
+
+    document.querySelector('.lang-btn').addEventListener('click', function () {
+        document.querySelector('.lang-select').classList.toggle('active');
+    });
+
+    document.addEventListener('click', function (event) {
+        const langSelect = document.querySelector('.lang-select');
+        if (!langSelect.contains(event.target)) {
+            langSelect.classList.remove('active');
+        }
+    });
+</script>
+<script>
+    // Получаем элементы
+    const profileButton = document.getElementById('profileButton');
+    const profilePanel = document.getElementById('profilePanel');
+    const timeInfo = document.getElementById('available_time'); // Элемент, где отображается время
+    const emailInfo = document.querySelector(".user-email");
+
+    fetch('/userDetails', {
+        method: 'GET',
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            timeInfo.textContent = `${Math.floor(data.availableSeconds / 60)} `;
+            emailInfo.textContent = data.username;
+        })
+
+    // Обработчик клика по кнопке профиля
+    profileButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        profilePanel.classList.toggle('active');
+    });
+
+    // Закрытие панели при клике вне её
+    document.addEventListener('click', (e) => {
+        if (!profilePanel.contains(e.target) && !profileButton.contains(e.target)) {
+            profilePanel.classList.remove('active');
+        }
+    });
+
+    // Обработчики для кнопок (для демонстрации)
+    document.querySelectorAll('.menu-item').forEach(button => {
+        button.addEventListener('click', () => {
+            console.log('Clicked:', button.querySelector('.menu-item-title').textContent);
+        });
+    });
+
+    document.querySelector('.logout-button').addEventListener('click', () => {
+        window.location.href = '/logout';
+
+    });
+</script>
+
+
+</html>
